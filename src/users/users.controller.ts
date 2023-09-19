@@ -17,9 +17,11 @@ export class UsersController {
     }
 
     @Post()
-    create(@Body() user: User): Promise<User> {
-        return this.usersService.create(user)
+    createUser(@Body() user: User): Promise<User> {
+      console.log(user)
+        return this.usersService.createUser(user.username,user.password,user.email)
     }
+
 
     @Put(':id')
     update(@Param('id') id: number, @Body() user: User): Promise<void> {

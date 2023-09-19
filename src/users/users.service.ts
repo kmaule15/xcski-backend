@@ -11,16 +11,28 @@ export class UsersService {
         @InjectRepository(User) private usersRepository: Repository<User>
     ) {}
 
-    async createUser(username: string, password: string): Promise<User> {
-        const hashedPassword = await bcrypt.hash(password, 10)
-
-        const newUser = this.usersRepository.create({
-            username,
-            password: hashedPassword
-        })
-
-        return await this.usersRepository.save(newUser)
+    async createUser(username: string, password: string, email: string): Promise<User> {
+        try {
+            console.log("before hash")
+            const hashedPassword = await bcrypt.hash(password, 10);
+            console.log(username)
+            console.log(hashedPassword);
+    
+            const newUser = this.usersRepository.create({
+                username,
+                password: hashedPassword,
+                email: email
+            });
+    
+            console.log(newUser);
+    
+            return await this.usersRepository.save(newUser);
+        } catch (error) {
+            console.error('Error occurred:', error);
+            throw error;
+        }
     }
+    
 
     findAll(): Promise<User[]> {
         return this.usersRepository.find()
