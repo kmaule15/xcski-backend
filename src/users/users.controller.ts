@@ -18,8 +18,8 @@ export class UsersController {
 
     @Post()
     createUser(@Body() user: User): Promise<User> {
-      console.log(user)
-        return this.usersService.createUser(user.username,user.password,user.email)
+      
+      return this.usersService.createUser(user.username,user.password,user.email)
     }
 
 

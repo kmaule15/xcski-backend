@@ -13,19 +13,16 @@ export class UsersService {
 
     async createUser(username: string, password: string, email: string): Promise<User> {
         try {
-            console.log("before hash")
+        
             const hashedPassword = await bcrypt.hash(password, 10);
-            console.log(username)
-            console.log(hashedPassword);
-    
+
             const newUser = this.usersRepository.create({
                 username,
                 password: hashedPassword,
                 email: email
             });
     
-            console.log(newUser);
-    
+            
             return await this.usersRepository.save(newUser);
         } catch (error) {
             console.error('Error occurred:', error);
