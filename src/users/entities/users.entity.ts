@@ -9,7 +9,8 @@ import {
 import * as bcrypt from 'bcrypt'
 
 @Entity('users')
-@Unique(['email', 'username'])
+@Unique(['email'])
+@Unique(['username'])
 export class User {
     @PrimaryGeneratedColumn()
     id: number
