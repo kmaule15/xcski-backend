@@ -14,11 +14,11 @@ export class UsersService {
     async createUser(username: string, password: string, email: string): Promise<User> {
         try {
         
-            const hashedPassword = await bcrypt.hash(password, 10);
+            // const hashedPassword = await bcrypt.hash(password, 10);
 
             const newUser = this.usersRepository.create({
                 username,
-                password: hashedPassword,
+                password,
                 email: email
             });
     
@@ -66,7 +66,7 @@ export class UsersService {
         if (!user) {
             return null
         }
-
+ 
         const isPasswordMatching = await bcrypt.compare(password, user.password)
 
         if (!isPasswordMatching) {
