@@ -61,19 +61,19 @@ export class UsersService {
     }
 
     async findUserByUsernameAndPassword(username:string, password: string): Promise<User | null> {
+        try{
         const user = await this.usersRepository.findOne({ where: {username }})
-
-        if (!user) {
-            return null
-        }
 
         const isPasswordMatching = await bcrypt.compare(password, user.password)
 
-        if (!isPasswordMatching) {
-            return null
+        if ( user && isPasswordMatching) {
+            return user
         }
 
-        return user
+    } catch (error) {
+        console.error('Error occurred:', error);
+        throw error;
+    }
     }
 
 }

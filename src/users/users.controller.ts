@@ -17,6 +17,11 @@ export class UsersController {
     }
 
     @Post()
+    findUserByUsernameAndPassword(@Body() user: User): Promise<User> {
+        return this.usersService.findUserByUsernameAndPassword(user.username, user.password)
+    }
+
+    @Post()
     createUser(@Body() user: User): Promise<User> {
       
       return this.usersService.createUser(user.username,user.password,user.email)
