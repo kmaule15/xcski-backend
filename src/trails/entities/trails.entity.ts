@@ -17,7 +17,7 @@ export class Trail {
   location: string;
 
   @Column({ type: 'enum', enum: ['easy', 'medium', 'difficult'] })
-  difficult: string;
+  difficulty: string;
 
   @Column()
   length: number;
