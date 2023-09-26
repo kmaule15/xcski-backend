@@ -9,13 +9,14 @@ import {
 } from '@nestjs/common';
 import { TrailsService } from './trails.service';
 import { Trail } from './entities/trails.entity';
+import { TrailDto } from './dto/create-trail.dto';
 
 @Controller('trails')
 export class TrailsController {
   constructor(private readonly trailsService: TrailsService) {}
 
   @Post()
-  createTrail(@Body() trail: Trail): Promise<Trail> {
+  createTrail(@Body() trail: Trail, trailDto: TrailDto): Promise<Trail> {
     return this.trailsService.createTrail(
       trail.name,
       trail.description,
@@ -23,7 +24,7 @@ export class TrailsController {
       trail.difficulty,
       trail.length,
       trail.estimatedTime,
-      trail.typesAllowed,
+      trailDto.typesAllowed,
     );
   }
 
