@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TrailsController } from './TrailsController';
 import { TrailsService } from './trails.service';
 import { Trail } from './entities/trails.entity';
+import { TrailsController } from './trails.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Trail])],
