@@ -16,14 +16,14 @@ export class TrailsController {
   constructor(private readonly trailsService: TrailsService) {}
 
   @Post()
-  createTrail(@Body() trail: Trail, trailDto: TrailDto): Promise<Trail> {
+  createTrail(@Body() trailDto: TrailDto): Promise<Trail> {
     return this.trailsService.createTrail(
-      trail.name,
-      trail.description,
-      trail.location,
-      trail.difficulty,
-      trail.length,
-      trail.estimatedTime,
+      trailDto.name,
+      trailDto.description,
+      trailDto.location,
+      trailDto.difficulty,
+      trailDto.length,
+      trailDto.estimatedTime,
       trailDto.typesAllowed,
     );
   }
