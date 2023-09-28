@@ -1,7 +1,36 @@
-import { ArrayNotEmpty, IsArray, IsIn, IsString } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class TrailDto {
-  // TODO add in more validators later as we need them
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  location: string;
+
+  @IsString()
+  @IsNotEmpty()
+  difficulty: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  length: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  estimatedTime: number;
 
   @IsArray()
   @ArrayNotEmpty()
