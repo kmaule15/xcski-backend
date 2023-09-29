@@ -4,10 +4,13 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './Authentication/auth.module';
+import { CommentModule } from './Community/Comments/comment.module';
+import { PassportModule } from '@nestjs/passport';
 import { TrailsModule } from './trails/trails.module';
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }), 
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -20,7 +23,8 @@ import { TrailsModule } from './trails/trails.module';
     }),
     UsersModule,
     AuthModule,
-    TrailsModule,
+    CommentModule,
+    TrailsModule
   ],
   controllers: [AppController],
   providers: [AppService],
