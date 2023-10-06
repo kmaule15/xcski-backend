@@ -22,6 +22,11 @@ export class UsersController {
       return this.usersService.createUser(user.username,user.password,user.email)
     }
 
+    @Post('email')
+    CheckExistReset(@Body() body: {email: string}): Promise<void> {
+      const { email } = body; 
+      return this.usersService.CheckExistReset(email)
+    }
 
     @Put(':id')
     update(@Param('id') id: number, @Body() user: User): Promise<void> {
