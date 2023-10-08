@@ -4,14 +4,11 @@ import { Repository }from 'typeorm'
 import { User } from './entities/users.entity'
 import { JwtPayload } from './interfaces/jwt-payload.interface'
 import * as bcrypt from 'bcrypt'
-import { EmailService } from '../email/email.service';
-import { throwError } from 'rxjs'
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User) private usersRepository: Repository<User>,
-        private readonly emailService: EmailService
     ) {}
 
     async createUser(username: string, password: string, email: string): Promise<User> {
@@ -49,6 +46,7 @@ export class UsersService {
     async update(id: number, user: User): Promise<void> {
         await this.usersRepository.update(id, user)
     }
+    
 
     async remove(id: number): Promise<void> {
         await this.usersRepository.delete(id)
@@ -79,33 +77,8 @@ export class UsersService {
         return user
     }
 
-    async CheckExistReset(email: string): Promise< void > {
-        try{
-
-            const user = await this.usersRepository.findOne({ where: {email }})
-            console.log(user);
-          
-            if (user){
-                const emailOptions = {
-                    from: 'XCSadm@gmail.com',
-                    to: email,
-                    subject: 'Heck',
-                    text: ' Yea'
-                  };
-    
-                  await this.emailService.sendEmail(emailOptions); 
-            }else{
-               throw Error('Make an Account loser');
-            }
-            
-
-          
-
-        }catch(error){
-            console.log(error)
-        
-        }
-    
-    }
+   async findUserbyEmail(email: string): Promise<User>{
+    return  await this.usersRepository.findOne({ where: {email}})
+   }
 
 }

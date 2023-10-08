@@ -1,6 +1,9 @@
 import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { User } from './entities/users.entity'
+import {  HttpException, HttpStatus, Req } from '@nestjs/common';
+import { Request } from 'express'; // Import the Request object
+
 
 @Controller('users')
 export class UsersController {
@@ -18,14 +21,7 @@ export class UsersController {
 
     @Post()
     createUser(@Body() user: User): Promise<User> {
-      
       return this.usersService.createUser(user.username,user.password,user.email)
-    }
-
-    @Post('email')
-    CheckExistReset(@Body() body: {email: string}): Promise<void> {
-      const { email } = body; 
-      return this.usersService.CheckExistReset(email)
     }
 
     @Put(':id')
