@@ -1,9 +1,6 @@
 import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { User } from './entities/users.entity'
-import {  HttpException, HttpStatus, Req } from '@nestjs/common';
-import { Request } from 'express'; // Import the Request object
-
 
 @Controller('users')
 export class UsersController {
