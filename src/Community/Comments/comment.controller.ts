@@ -32,7 +32,10 @@ export class CommentController {
         return await this.commentService.findAllTopLevelCommentsByPost(postId)
     }
 
-    
+    @Get('child-comments/:parentId')
+    async getChildComments(@Param('parentId') parentId: number): Promise<Comment[]> {
+        return await this.commentService.findChildCommentsByParentId(parentId)
+    }
 
     
 }
