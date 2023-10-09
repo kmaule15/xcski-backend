@@ -18,10 +18,8 @@ export class UsersController {
 
     @Post()
     createUser(@Body() user: User): Promise<User> {
-      
       return this.usersService.createUser(user.username,user.password,user.email)
     }
-
 
     @Put(':id')
     update(@Param('id') id: number, @Body() user: User): Promise<void> {
