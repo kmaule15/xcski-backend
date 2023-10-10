@@ -17,7 +17,6 @@ export class TrailsController {
 
   @Post()
   createTrail(@Body() trailDto: TrailDto): Promise<Trail> {
-    console.log(trailDto);
     return this.trailsService.createTrail(
       trailDto.name,
       trailDto.description,
