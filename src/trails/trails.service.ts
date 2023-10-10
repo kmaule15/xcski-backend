@@ -13,16 +13,22 @@ export class TrailsService {
     name: string,
     description: string,
     location: string,
+    latitude: number,
+    longitude: number,
     difficulty: string,
     length: number,
     estimatedTime: number,
     typesAllowed: string[],
   ): Promise<Trail> {
     try {
+      console.log('latitude', latitude);
+      console.log('longitude', longitude);
       if (
         !name ||
         !description ||
         !location ||
+        !latitude ||
+        !longitude ||
         !difficulty ||
         !length ||
         !estimatedTime ||
@@ -35,6 +41,8 @@ export class TrailsService {
         name,
         description,
         location,
+        latitude,
+        longitude,
         difficulty,
         length,
         estimatedTime,
