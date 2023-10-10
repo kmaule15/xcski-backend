@@ -20,6 +20,14 @@ export class TrailDto {
   @IsNotEmpty()
   location: string;
 
+  @IsNumber()
+  @IsNotEmpty()
+  latitude: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  longitude: number;
+
   @IsString()
   @IsNotEmpty()
   difficulty: string;
