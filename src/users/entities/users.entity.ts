@@ -4,9 +4,11 @@ import {
     Column,
     Unique,
     BeforeInsert,
-    BeforeUpdate
+    BeforeUpdate,
+    OneToMany
 } from 'typeorm' 
 import * as bcrypt from 'bcrypt'
+import { Post } from 'src/Community/Posts/entities/post.entity'
 
 @Entity('users')
 @Unique(['email'])
@@ -32,4 +34,7 @@ export class User {
     async hashPassword() {
         this.password = await bcrypt.hash(this.password, 10)
     }
+
+    @OneToMany(() => Post, post => post.author)
+    posts: Post[]
 }

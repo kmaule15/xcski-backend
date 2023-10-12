@@ -8,6 +8,7 @@ import { CommentModule } from './Community/Comments/comment.module';
 import { PassportModule } from '@nestjs/passport';
 import { TrailsModule } from './trails/trails.module';
 import { EmailModule } from './email/email.module';
+import { PostModule } from './Community/Posts/post.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { EmailModule } from './email/email.module';
     CommentModule,
     TrailsModule,
     EmailModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],
