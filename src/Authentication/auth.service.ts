@@ -3,12 +3,14 @@ import { JwtService } from '@nestjs/jwt'
 import { UsersService } from '../users/users.service'
 import { JwtPayload } from '../users/interfaces/jwt-payload.interface'
 import { User } from 'src/users/entities/users.entity'
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly usersService: UsersService,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly emailService: EmailService
     ) {}
 
     async validateUserByJwt(payload: JwtPayload): Promise<User | null> {
@@ -42,7 +44,55 @@ export class AuthService {
         }
     }
 
+    async ResetToken(email: string, id: number, username:string){
+        const payload: JwtPayload = {
+            email: email,
+            username: username,
+            userId: id
+        }
+
+       return {access_token: this.jwtService.sign(payload)}
+    }
+
     async validateToken(jwt: string): Promise<any> {
         return this.jwtService.verify(jwt)
+    }
+
+    async updatePassword(id: number, pass: string): Promise<void> {
+        const user = await this.usersService.findOne(id);
+      
+        user.password = pass;
+      
+        await this.usersService.update(id, user)
+    }
+
+    async CheckExistReset(email: string): Promise< { access_token: string} | null > {
+        try{
+            //checks if exists
+            const user = await this.usersService.findUserbyEmail(email)
+            
+            //Create token
+            const token = this.ResetToken(email, user.id, user.username);
+
+            //Create Email with token url
+            const ET = 'http://localhost:3001/PWU/' +(await token).access_token;
+            if (user){
+                const emailOptions = {
+                    from: 'XCSadm@gmail.com',
+                    to: email,
+                    subject: 'Heck',
+                    html: "<a href=" +ET+ ">Tester</a> ",
+                  };
+                  
+            //Send email      
+            await this.emailService.sendEmail(emailOptions); 
+    
+            return token;
+            }
+            
+        }catch(error){
+            console.log(error)
+        }
+    
     }
 }

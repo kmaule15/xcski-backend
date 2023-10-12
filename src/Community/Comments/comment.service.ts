@@ -48,4 +48,13 @@ export class CommentService {
         
         return comments
     }
+
+    async findChildCommentsByParentId(parentCommentId: number): Promise<Comment[]> {
+        return await this.commentRepository.find({
+            where: { 
+                parentComment: { id: parentCommentId }
+            },
+            relations: ['childComments']
+        })
+    }
 }

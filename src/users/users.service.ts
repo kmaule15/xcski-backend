@@ -46,6 +46,7 @@ export class UsersService {
     async update(id: number, user: User): Promise<void> {
         await this.usersRepository.update(id, user)
     }
+    
 
     async remove(id: number): Promise<void> {
         await this.usersRepository.delete(id)
@@ -75,5 +76,9 @@ export class UsersService {
 
         return user
     }
+
+   async findUserbyEmail(email: string): Promise<User>{
+    return  await this.usersRepository.findOne({ where: {email}})
+   }
 
 }

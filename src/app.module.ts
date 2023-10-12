@@ -7,6 +7,7 @@ import { AuthModule } from './Authentication/auth.module';
 import { CommentModule } from './Community/Comments/comment.module';
 import { PassportModule } from '@nestjs/passport';
 import { TrailsModule } from './trails/trails.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { TrailsModule } from './trails/trails.module';
     UsersModule,
     AuthModule,
     CommentModule,
-    TrailsModule
+    TrailsModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

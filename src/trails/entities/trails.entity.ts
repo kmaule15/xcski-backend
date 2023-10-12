@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Unique,
+  Double,
+} from 'typeorm';
 
 @Entity('trails')
 @Unique(['name'])
@@ -13,10 +19,14 @@ export class Trail {
   @Column()
   description: string;
 
-  // leaving as a string for now, but will need to update once map
-  // stuff is figured out - will need to store address in correct format
   @Column()
   location: string;
+
+  @Column('double precision')
+  latitude: number;
+
+  @Column('double precision')
+  longitude: number;
 
   @Column({ type: 'enum', enum: ['Easy', 'Medium', 'Difficult'] })
   difficulty: string;

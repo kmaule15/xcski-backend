@@ -21,6 +21,8 @@ export class TrailsController {
       trailDto.name,
       trailDto.description,
       trailDto.location,
+      trailDto.latitude,
+      trailDto.longitude,
       trailDto.difficulty,
       trailDto.length,
       trailDto.estimatedTime,
