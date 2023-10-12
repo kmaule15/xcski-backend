@@ -18,7 +18,7 @@ export class PostService {
   }
 
   findOne(id: number): Promise<Post> {
-    return this.postRepository.findOne(id);
+    return this.postRepository.findOneBy({id: id});
   }
 
   async create(createPostDto: CreatePostDto): Promise<Post> {
