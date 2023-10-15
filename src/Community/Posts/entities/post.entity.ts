@@ -1,23 +1,30 @@
-import { User } from "src/users/entities/users.entity"
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
+import { User } from 'src/users/entities/users.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity('posts')
 export class Post {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    title: string
+  @Column()
+  title: string;
 
-    @Column('text')
-    content: string
-    
-    @CreateDateColumn()
-    createdAt: Date
+  @Column('text')
+  content: string;
 
-    @UpdateDateColumn()
-    updatedAt: Date
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @OneToMany(() => User, user => user.posts)
-    author: User
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @OneToMany(() => User, (user) => user.posts)
+  author: User;
 }
