@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,7 +16,7 @@ export class Event {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => User, (user) => user.authoredEvents)
+  @ManyToOne(() => User, (user) => user.authoredEvents)
   author: User;
 
   @Column()
@@ -30,7 +31,7 @@ export class Event {
   @Column()
   location: string;
 
-  @OneToMany(() => Trail, (trail) => trail.events)
+  @ManyToOne(() => Trail, (trail) => trail.events)
   trail: Trail;
 
   @Column()

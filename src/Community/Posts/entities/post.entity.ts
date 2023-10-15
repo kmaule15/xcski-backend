@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity('posts')
@@ -25,6 +26,6 @@ export class Post {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts)
   author: User;
 }
