@@ -6,7 +6,6 @@ import {
   Entity,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -44,8 +43,8 @@ export class Event {
   updatedAt: Date;
 
   @ManyToMany(() => User, (user) => user.invitedEvents)
-  invitees: User;
+  invitees: User[];
 
   @ManyToMany(() => User, (user) => user.participatedEvents)
-  participants: User;
+  participants: User[];
 }

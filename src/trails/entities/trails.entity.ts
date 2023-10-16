@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
-  Double,
   OneToMany,
 } from 'typeorm';
 import { Event } from 'src/Community/events/entities/event.entity';
