@@ -9,10 +9,11 @@ import { PassportModule } from '@nestjs/passport';
 import { TrailsModule } from './trails/trails.module';
 import { EmailModule } from './email/email.module';
 import { PostModule } from './Community/Posts/post.module';
+import { EventsModule } from './Community/events/event.module';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }), 
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -29,6 +30,7 @@ import { PostModule } from './Community/Posts/post.module';
     TrailsModule,
     EmailModule,
     PostModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
