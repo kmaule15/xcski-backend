@@ -21,8 +21,6 @@ export class TrailsService {
     typesAllowed: string[],
   ): Promise<Trail> {
     try {
-      console.log('latitude', latitude);
-      console.log('longitude', longitude);
       if (
         !name ||
         !description ||
