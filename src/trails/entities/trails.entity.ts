@@ -3,8 +3,9 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
-  Double,
+  OneToMany,
 } from 'typeorm';
+import { Event } from 'src/Community/events/entities/event.entity';
 
 @Entity('trails')
 @Unique(['name'])
@@ -39,4 +40,7 @@ export class Trail {
 
   @Column({ type: 'enum', enum: ['Classic', 'Skate'], array: true })
   typesAllowed: string[];
+
+  @OneToMany(() => Event, (event) => event.trail)
+  events: Event[];
 }
