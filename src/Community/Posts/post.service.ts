@@ -35,7 +35,7 @@ export class PostService {
     const post = new Post();
     post.title = createPostDto.title;
     post.content = createPostDto.content;
-    post.user = user;
+    post.author = user;
 
     return this.postRepository.save(post);
   }
