@@ -1,9 +1,10 @@
 // post.controller.ts
-import { Controller, Get, Post as HttpPost, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post as HttpPost, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { UpdatePostDto } from './dtos/update-post.dto';
 import { Post } from './entities/post.entity';
+import { JwtAuthGuard } from 'src/Authentication/guards/jwt-auth.guard';
 
 @Controller('posts')
 export class PostController {
@@ -15,11 +16,12 @@ export class PostController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Post> {
-    return this.postService.findOne(+id);
+  findOne(@Param() params: {id: number}): Promise<Post> {
+    return this.postService.findOne(+params.id);
   }
 
   @HttpPost()
+  @UseGuards(JwtAuthGuard)
   create(@Body() createPostDto: CreatePostDto): Promise<Post> {
     return this.postService.create(createPostDto);
   }
