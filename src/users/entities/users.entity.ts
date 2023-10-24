@@ -35,6 +35,6 @@ export class User {
         this.password = await bcrypt.hash(this.password, 10)
     }
 
-    @OneToMany(() => Post, post => post.author)
+    @OneToMany(() => Post, post => post.user)
     posts: Post[]
 }
