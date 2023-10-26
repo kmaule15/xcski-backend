@@ -18,14 +18,14 @@ export class PostService {
 
   findAll(): Promise<Post[]> {
     return this.postRepository.find({
-      relations: ['user']
+      relations: ['author']
     });
   }
 
   findOne(id: number): Promise<Post> {
     return this.postRepository.findOne({
       where: { id },
-      relations: ['user']
+      relations: ['author']
     });
   }
 
