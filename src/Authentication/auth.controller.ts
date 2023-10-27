@@ -19,6 +19,16 @@ export class AuthController {
       const { email } = body; 
       return this.authService.CheckExistReset(email)
     }
+    @Post('google')
+    async GoogleDecode(@Body() token: any) : Promise<{ username: any; Atoken: Promise<{ access_token: string; }>; }>{
+      const decodedToken = await this.authService.decodeToken(token.response.credential);
+      const username = decodedToken.name
+      const Atoken = this.authService.GoogleLoginCreate(decodedToken)
+    return  {username, Atoken };
+
+
+      
+    }
 
     @Post('resetpassword')
   async resetPassword(@Body() requestBody: { token: string, confirmPassword: string }) {
@@ -27,7 +37,8 @@ export class AuthController {
     try {
       
       const decodedToken = await this.authService.validateToken(token); 
-
+      console.log(decodedToken.userId)
+      console.log(confirmPassword)
       await this.authService.updatePassword(decodedToken.userId, confirmPassword);
 
     } catch (error) {
