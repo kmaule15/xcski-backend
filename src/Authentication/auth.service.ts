@@ -57,6 +57,27 @@ export class AuthService {
     async validateToken(jwt: string): Promise<any> {
         return this.jwtService.verify(jwt)
     }
+    async decodeToken(jwt: string): Promise<any> {
+        return this.jwtService.decode(jwt)
+    }
+
+    async GoogleLoginCreate(GoogleObj: any){
+        const user = await this.usersService.findUserbyEmail(GoogleObj.email)
+        if(user){
+            console.log("is good")
+            return this.login(user)
+        }else{
+            console.log(GoogleObj.email)
+            console.log(GoogleObj.name)
+            console.log(GoogleObj.locale)
+            this.usersService.createUser(GoogleObj.name, GoogleObj.locale, GoogleObj.email)
+            console.log(GoogleObj.email)
+            const user = await this.usersService.findUserbyEmail(GoogleObj.email)
+            console.log(user)
+            return this.login(user)
+        }
+
+    }
 
     async updatePassword(id: number, pass: string): Promise<void> {
         const user = await this.usersService.findOne(id);
