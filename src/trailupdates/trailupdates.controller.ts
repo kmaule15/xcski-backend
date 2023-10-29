@@ -22,7 +22,7 @@ export class TrailUpdatesController {
     return this.trailUpdatesService.createTrailUpdate(
       trailUpdateDto.trailName,
       trailUpdateDto.description,
-      trailUpdateDto.startDateTime,
+      new Date(trailUpdateDto.startDateTime),
       trailUpdateDto.trailId,
       trailUpdateDto.trailOpenPercentage,
     );
