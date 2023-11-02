@@ -20,10 +20,10 @@ export class AuthController {
       return this.authService.CheckExistReset(email)
     }
     @Post('google')
-    async GoogleDecode(@Body() token: any) : Promise<{ username: any; Atoken: Promise<{ access_token: string; }>; }>{
+    async GoogleDecode(@Body() token: any) : Promise<any>{
       const decodedToken = await this.authService.decodeToken(token.response.credential);
-      const username = decodedToken.name
-      const Atoken = this.authService.GoogleLoginCreate(decodedToken)
+      const username = await decodedToken.name
+      const Atoken = await this.authService.GoogleLoginCreate(decodedToken)
     return  {username, Atoken };
 
 
@@ -37,8 +37,6 @@ export class AuthController {
     try {
       
       const decodedToken = await this.authService.validateToken(token); 
-      console.log(decodedToken.userId)
-      console.log(confirmPassword)
       await this.authService.updatePassword(decodedToken.userId, confirmPassword);
 
     } catch (error) {
