@@ -29,8 +29,8 @@ export class PostService {
     });
   }
 
-  async create(createPostDto: CreatePostDto): Promise<Post> {
-    const user = await this.usersRepository.findOneByOrFail({ id: createPostDto.userId})
+  async create(createPostDto: CreatePostDto, userId: number): Promise<Post> {
+    const user = await this.usersRepository.findOneByOrFail({ id: userId})
 
     const post = new Post();
     post.title = createPostDto.title;
