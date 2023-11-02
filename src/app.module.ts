@@ -8,6 +8,7 @@ import { CommentModule } from './Community/Comments/comment.module';
 import { PassportModule } from '@nestjs/passport';
 import { TrailsModule } from './trails/trails.module';
 import { EmailModule } from './email/email.module';
+import { TrailUpdatesModule } from './trailupdates/trailupdates.module';
 import { PostModule } from './Community/Posts/post.module';
 import { EventsModule } from './Community/events/event.module';
 
@@ -29,6 +30,7 @@ import { EventsModule } from './Community/events/event.module';
     CommentModule,
     TrailsModule,
     EmailModule,
+    TrailUpdatesModule,
     PostModule,
     EventsModule,
   ],
