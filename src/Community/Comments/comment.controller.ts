@@ -12,7 +12,7 @@ import { JwtAuthGuard } from 'src/Authentication/guards/jwt-auth.guard'
 export class CommentController {
     constructor(private readonly commentService: CommentService) {}
 
-    @Post('comment')
+    @Post('comments')
     @UseGuards(JwtAuthGuard)
     async createComment(
         @Body() createCommentDto: CreateCommentDto,
@@ -21,7 +21,7 @@ export class CommentController {
         return await this.commentService.createComment(createCommentDto, user.id)
     }
 
-    @Get('comment')
+    @Get('comments')
     findAll(): Promise<Comment[]> {
         return this.commentService.findAll()
     }

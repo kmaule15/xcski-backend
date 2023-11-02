@@ -18,7 +18,7 @@ export class CommentService {
     async createComment(createCommentDto: CreateCommentDto, userId: number): Promise<Comment> {
         const { content, postId, trailId, parentCommentId } = createCommentDto
 
-        console.log(parentCommentId)
+        
 
         const newComment = this.commentRepository.create({
             content,
@@ -28,10 +28,12 @@ export class CommentService {
             parentComment: parentCommentId ? { id: parentCommentId } as Comment : undefined
         })
 
-        console.log(newComment.parentComment)
+        
 
         
         const savedComment = await this.commentRepository.save(newComment)
+
+        console.log(savedComment)
 
         return savedComment
     }

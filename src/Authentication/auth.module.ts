@@ -16,7 +16,7 @@ import { EmailModule } from '../email/email.module';
         EmailModule,
         JwtModule.register({
          secret: process.env.JWT_SECRET,
-         signOptions: { expiresIn: '60m' }  
+         signOptions: { expiresIn: '720m' }  
         })
     ],
     exports: [AuthService]
