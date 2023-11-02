@@ -67,13 +67,9 @@ export class AuthService {
             console.log("is good")
             return this.login(user)
         }else{
-            console.log(GoogleObj.email)
-            console.log(GoogleObj.name)
-            console.log(GoogleObj.locale)
-            this.usersService.createUser(GoogleObj.name, GoogleObj.locale, GoogleObj.email)
-            console.log(GoogleObj.email)
+            const hold = await this.usersService.createUser(GoogleObj.name, GoogleObj.locale, GoogleObj.email)
             const user = await this.usersService.findUserbyEmail(GoogleObj.email)
-            console.log(user)
+           
             return this.login(user)
         }
 
