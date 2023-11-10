@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Body, Put, Param, Delete, HttpException, HttpStatus } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { User } from './entities/users.entity'
+import { CreateUserDto } from './dto/create-user.dto'
 
 @Controller('users')
 export class UsersController {
@@ -17,9 +18,24 @@ export class UsersController {
     }
 
     @Post()
-    createUser(@Body() user: User): Promise<User> {
-      return this.usersService.createUser(user.username,user.password,user.email)
+    async createUser(@Body() createUserDto: CreateUserDto): Promise<User | { message: string }> {
+        try {
+            return await this.usersService.createUser(createUserDto.username, createUserDto.password, createUserDto.email);
+        } catch (error) {
+            if (error.message === 'Username already exists' || error.message === 'Email already exists') {
+                throw new HttpException({
+                    status: HttpStatus.CONFLICT,
+                    error: error.message,
+                }, HttpStatus.CONFLICT);
+            }
+            throw new HttpException({
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                error: 'Internal Server Error',
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+    
+
 
     @Put(':id')
     update(@Param('id') id: number, @Body() user: User): Promise<void> {
