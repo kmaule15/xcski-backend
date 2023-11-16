@@ -12,22 +12,21 @@ export class UsersService {
     ) {}
 
     async createUser(username: string, password: string, email: string): Promise<User> {
-        try {
-            const newUser = this.usersRepository.create({
-                username,
-                password,
-                email: email
-            });
-    
-            
-            return await this.usersRepository.save(newUser);
-        } catch (error) {
-            console.error('Error occurred:', error);
-            throw error;
+        const existingUsername = await this.usersRepository.findOne({ where: { username } });
+        if (existingUsername) {
+            throw new Error('Username already exists');
         }
-    }
+        
+        const existingEmail = await this.usersRepository.findOne({ where: { email } });
+        if (existingEmail) {
+            throw new Error('Email already exists');
+        }
     
-
+        const newUser = this.usersRepository.create({ username, password, email });
+        return await this.usersRepository.save(newUser);
+    }
+       
+    
     findAll(): Promise<User[]> {
         return this.usersRepository.find()
     }
