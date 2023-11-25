@@ -37,11 +37,11 @@ export class Event {
   @Column()
   location: string;
 
-  @Column('double precision')
-  latitude: number;
+  @Column('double precision', { nullable: true })
+  latitude?: number;
 
-  @Column('double precision')
-  longitude: number;
+  @Column('double precision', { nullable: true })
+  longitude?: number;
 
   @ManyToOne(() => Trail, (trail) => trail.events)
   trail?: Trail;

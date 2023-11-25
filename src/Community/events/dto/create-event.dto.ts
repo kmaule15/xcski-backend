@@ -36,13 +36,9 @@ export class CreateEventDto {
   @IsNotEmpty()
   location: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  latitude: number;
+  latitude?: number;
 
-  @IsNumber()
-  @IsNotEmpty()
-  longitude: number;
+  longitude?: number;
 
   @IsBoolean()
   @IsNotEmpty()
