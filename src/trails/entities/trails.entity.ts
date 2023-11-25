@@ -42,5 +42,5 @@ export class Trail {
   typesAllowed: string[];
 
   @OneToMany(() => Event, (event) => event.trail)
-  events: Event[];
+  events?: Event[];
 }

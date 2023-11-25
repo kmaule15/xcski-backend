@@ -8,7 +8,7 @@ export class EmailService {
     const oauth2Client = new google.auth.OAuth2(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,
-      'https://developers.google.com/oauthplayground'
+      'https://developers.google.com/oauthplayground',
     );
 
     oauth2Client.setCredentials({
@@ -40,7 +40,9 @@ export class EmailService {
   }
 
   async sendEmail(emailOptions: nodemailer.SendMailOptions) {
+    // console.log('SEND EMAIL', emailOptions);
     const emailTransporter = await this.createTransporter();
+    // console.log('emailTransporter', emailTransporter);
     await emailTransporter.sendMail(emailOptions);
   }
 }
