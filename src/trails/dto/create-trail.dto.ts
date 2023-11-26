@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class TrailDto {
+export class CreateTrailDto {
   @IsString()
   @IsNotEmpty()
   name: string;

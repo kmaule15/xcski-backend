@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Trail } from './entities/trails.entity';
 import { Repository } from 'typeorm';
+import { CreateTrailDto } from './dto/create-trail.dto';
 
 @Injectable()
 export class TrailsService {
@@ -9,48 +10,23 @@ export class TrailsService {
     @InjectRepository(Trail) private trailsRepository: Repository<Trail>,
   ) {}
 
-  async createTrail(
-    name: string,
-    description: string,
-    location: string,
-    latitude: number,
-    longitude: number,
-    difficulty: string,
-    length: number,
-    estimatedTime: number,
-    typesAllowed: string[],
-  ): Promise<Trail> {
+  async createTrail(createTrailDto: CreateTrailDto): Promise<Trail> {
+    const trail = new Trail();
+    trail.name = createTrailDto.name;
+    trail.description = createTrailDto.description;
+    trail.location = createTrailDto.location;
+    trail.latitude = createTrailDto.latitude;
+    trail.longitude = createTrailDto.longitude;
+    trail.difficulty = createTrailDto.difficulty;
+    trail.length = createTrailDto.length;
+    trail.estimatedTime = createTrailDto.estimatedTime;
+    trail.typesAllowed = createTrailDto.typesAllowed;
+
     try {
-      if (
-        !name ||
-        !description ||
-        !location ||
-        !latitude ||
-        !longitude ||
-        !difficulty ||
-        !length ||
-        !estimatedTime ||
-        typesAllowed.length === 0
-      ) {
-        throw new BadRequestException('All fields must be filled.');
-      }
-
-      const newTrail = this.trailsRepository.create({
-        name,
-        description,
-        location,
-        latitude,
-        longitude,
-        difficulty,
-        length,
-        estimatedTime,
-        typesAllowed,
-      });
-
-      return await this.trailsRepository.save(newTrail);
+      return await this.trailsRepository.save(trail);
     } catch (error) {
       console.error('Error occurred while creating trail:', error);
-      throw error;
+      throw new Error('Failed to create trail.');
     }
   }
 
