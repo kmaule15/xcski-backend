@@ -8,6 +8,6 @@ import { TrailsController } from './trails.controller';
   imports: [TypeOrmModule.forFeature([Trail])],
   controllers: [TrailsController],
   providers: [TrailsService],
-  exports: [TrailsService],
+  exports: [TrailsService, TypeOrmModule],
 })
 export class TrailsModule {}

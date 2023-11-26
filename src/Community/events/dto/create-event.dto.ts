@@ -1,4 +1,10 @@
-import { IsBoolean, IsDate, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { Trail } from 'src/trails/entities/trails.entity';
 import { User } from 'src/users/entities/users.entity';
 
@@ -18,12 +24,21 @@ export class CreateEventDto {
   @IsNotEmpty()
   date: Date;
 
+  @IsDate()
+  @IsNotEmpty()
+  startTime: Date;
+
+  @IsDate()
+  @IsNotEmpty()
+  endTime: Date;
+
   @IsString()
   @IsNotEmpty()
   location: string;
 
-  @IsNotEmpty()
-  trail: Trail;
+  latitude?: number;
+
+  longitude?: number;
 
   @IsBoolean()
   @IsNotEmpty()
@@ -37,7 +52,9 @@ export class CreateEventDto {
   @IsNotEmpty()
   updatedAt: Date;
 
-  invitees?: User;
+  trail?: Trail;
 
-  participants?: User;
+  invitees?: User[];
+
+  participants?: User[];
 }

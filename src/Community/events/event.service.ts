@@ -3,28 +3,37 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from './entities/event.entity';
 import { CreateEventDto } from './dto/create-event.dto';
+import { User } from 'src/users/entities/users.entity';
+import { Trail } from 'src/trails/entities/trails.entity';
 
 @Injectable()
 export class EventsService {
   constructor(
     @InjectRepository(Event) private eventsRepository: Repository<Event>,
+    @InjectRepository(User) private usersRepository: Repository<User>, // @InjectRepository(Trail) private trailsRepository: Repository<Trail>,
   ) {}
 
-  async createEvent(createEventDto: CreateEventDto): Promise<Event> {
-    console.log('createEventDto', createEventDto);
-    const { author, title, description, date, location, trail, isPublic } =
-      createEventDto;
+  async createEvent(
+    createEventDto: CreateEventDto,
+    userId: number,
+  ): Promise<Event> {
+    const author = await this.usersRepository.findOneByOrFail({ id: userId });
+    const event = new Event();
+    event.author = author;
+    event.title = createEventDto.title;
+    event.description = createEventDto.description;
+    event.date = createEventDto.date;
+    event.startTime = createEventDto.startTime;
+    event.endTime = createEventDto.endTime;
+    event.location = createEventDto.location;
+    event.latitude = createEventDto.latitude;
+    event.longitude = createEventDto.longitude;
+    event.trail = createEventDto.trail;
+    event.isPublic = createEventDto.isPublic;
+    event.invitees = createEventDto.invitees;
+    event.participants = createEventDto.participants;
 
-    const newEvent = this.eventsRepository.create({
-      author,
-      title,
-      description,
-      date,
-      location,
-      trail,
-      isPublic,
-    });
-    return await this.eventsRepository.save(newEvent);
+    return await this.eventsRepository.save(event);
   }
 
   async updateEvent(id: number, event: Event): Promise<void> {
@@ -37,7 +46,9 @@ export class EventsService {
   }
   async getAllEvents(): Promise<Event[]> {
     try {
-      return await this.eventsRepository.find();
+      return await this.eventsRepository.find({
+        relations: ['author'],
+      });
     } catch (error) {
       console.error('Error occured while finding all events: ', error);
       throw new Error('Failed to return all events.');
@@ -46,10 +57,13 @@ export class EventsService {
 
   async findOneEvent(id: number): Promise<Event> {
     try {
-      return await this.eventsRepository.findOneByOrFail({ id: id });
+      return await this.eventsRepository.findOneOrFail({
+        where: { id: id },
+        relations: ['invitees', 'author', 'trail'],
+      });
     } catch (error) {
       console.error('Error occured while finding event: ', error);
-      throw new Error('Failed to return trail');
+      throw new Error('Failed to return event');
     }
   }
 
@@ -57,8 +71,8 @@ export class EventsService {
     try {
       await this.eventsRepository.delete(id);
     } catch (error) {
-      console.error('Error occured while removing trail: ', error);
-      throw new Error('Failed to delete trail');
+      console.error('Error occured while removing event: ', error);
+      throw new Error('Failed to delete event');
     }
   }
 }

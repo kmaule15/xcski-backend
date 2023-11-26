@@ -6,18 +6,27 @@ import {
   Put,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { EventsService } from './event.service';
 import { Event } from './entities/event.entity';
+import { JwtAuthGuard } from 'src/Authentication/guards/jwt-auth.guard';
+import { GetUser } from 'src/Authentication/decorators/get-user.decorator';
+import { User } from 'src/users/entities/users.entity';
+import { Trail } from 'src/trails/entities/trails.entity';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
-  createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {
-    return this.eventsService.createEvent(createEventDto);
+  @UseGuards(JwtAuthGuard)
+  async createEvent(
+    @Body() createEventDto: CreateEventDto,
+    @GetUser() user: User,
+  ): Promise<Event> {
+    return this.eventsService.createEvent(createEventDto, user.id);
   }
 
   @Put(':id')

@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -28,10 +29,22 @@ export class Event {
   date: Date;
 
   @Column()
+  startTime: Date;
+
+  @Column()
+  endTime: Date;
+
+  @Column()
   location: string;
 
+  @Column('double precision', { nullable: true })
+  latitude?: number;
+
+  @Column('double precision', { nullable: true })
+  longitude?: number;
+
   @ManyToOne(() => Trail, (trail) => trail.events)
-  trail: Trail;
+  trail?: Trail;
 
   @Column()
   isPublic: boolean;
@@ -43,8 +56,19 @@ export class Event {
   updatedAt: Date;
 
   @ManyToMany(() => User, (user) => user.invitedEvents)
-  invitees: User[];
+  @JoinTable({
+    name: 'event_invitees', // Name of the join table
+    joinColumn: {
+      name: 'event_id', // Name of the column in the join table that references the event entity
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'user_id', // Name of the column in the join table that references the user entity
+      referencedColumnName: 'id',
+    },
+  })
+  invitees?: User[];
 
   @ManyToMany(() => User, (user) => user.participatedEvents)
-  participants: User[];
+  participants?: User[];
 }
