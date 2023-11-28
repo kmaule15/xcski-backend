@@ -70,5 +70,16 @@ export class Event {
   invitees?: User[];
 
   @ManyToMany(() => User, (user) => user.participatedEvents)
+  @JoinTable({
+    name: 'event_participants',
+    joinColumn: {
+      name: 'event_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+  })
   participants?: User[];
 }
