@@ -5,6 +5,7 @@ import { Event } from './entities/event.entity';
 import { CreateEventDto } from './dto/create-event.dto';
 import { User } from 'src/users/entities/users.entity';
 import { Trail } from 'src/trails/entities/trails.entity';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventsService {
@@ -36,11 +37,38 @@ export class EventsService {
     return await this.eventsRepository.save(event);
   }
 
-  async updateEvent(id: number, event: Event): Promise<void> {
+  async updateEventDetails(
+    id: number,
+    updateEventDto: UpdateEventDto,
+  ): Promise<void> {
     try {
-      await this.eventsRepository.update(id, event);
+      await this.eventsRepository.update(id, updateEventDto);
     } catch (error) {
-      console.error('Error occured while updating event: ', error);
+      console.error('Error occurred while updating event details: ', error);
+      throw new Error('Failed to update event details');
+    }
+  }
+
+  async updateEventParticipants(
+    id: number,
+    newParticipants: User[],
+  ): Promise<void> {
+    // need to update the entire event entity to update
+    // the join table for the many to many relationship
+    try {
+      const event = await this.eventsRepository.findOne({
+        where: { id },
+        relations: ['participants'],
+      });
+
+      if (!event) {
+        throw new Error(`Event with id ${id} not found`);
+      }
+      event.participants = newParticipants;
+
+      await this.eventsRepository.save(event);
+    } catch (error) {
+      console.error('Error occurred while updating event: ', error);
       throw new Error('Failed to update the event');
     }
   }
@@ -59,7 +87,7 @@ export class EventsService {
     try {
       return await this.eventsRepository.findOneOrFail({
         where: { id: id },
-        relations: ['invitees', 'author', 'trail'],
+        relations: ['invitees', 'participants', 'author', 'trail'],
       });
     } catch (error) {
       console.error('Error occured while finding event: ', error);
