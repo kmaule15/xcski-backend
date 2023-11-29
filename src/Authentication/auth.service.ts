@@ -100,7 +100,8 @@ export class AuthService {
       const token = this.ResetToken(email, user.id, user.username);
 
       //Create Email with token url
-      const ET = 'http://localhost:3001/PWU/' + (await token).access_token;
+      const ET =
+        `${process.env.REACT_APP_FRONTEND_URL}/` + (await token).access_token;
       if (user) {
         const emailOptions = {
           from: 'XCSadm@gmail.com',
@@ -132,7 +133,7 @@ export class AuthService {
 
       //Create Email with token url
       const link =
-        'http://localhost:3001/eventinvite/' +
+        `${process.env.REACT_APP_FRONTEND_URL}/eventinvite/` +
         eventId +
         '/' +
         user.id +
