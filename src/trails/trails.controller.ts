@@ -33,6 +33,11 @@ export class TrailsController {
     return this.trailsService.removeTrail(id);
   }
 
+  @Get('test')
+  test(): string {
+    return 'endpoint is working';
+  }
+
   @Get()
   findAll(): Promise<Trail[]> {
     return this.trailsService.findAllTrails();
