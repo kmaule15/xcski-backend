@@ -107,8 +107,8 @@ export class AuthService {
         const emailOptions = {
           from: 'XCSadm@gmail.com',
           to: email,
-          subject: 'Heck',
-          html: '<a href=' + ET + '>Tester</a> ',
+          subject: 'Reset Password!',
+          html: '<a href=' + ET + '>Click Here to Reset Password!</a> ',
         };
 
         //Send email
@@ -151,14 +151,13 @@ export class AuthService {
             link +
             '>Go To Event</a>',
         };
-
         //Send email
         await this.emailService.sendEmail(emailOptions);
 
         return token;
       }
     } catch (error) {
-      console.log(error);
+      console.error('Email failed to send: ', error);
     }
   }
 }

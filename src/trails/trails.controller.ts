@@ -33,9 +33,11 @@ export class TrailsController {
     return this.trailsService.removeTrail(id);
   }
 
-  @Get('test')
-  test(): string {
-    return 'endpoint is working';
+  @Get('grooming-data')
+  async getGroomingData(): Promise<void> {
+    console.log('Fetch Started');
+    await this.trailsService.getTrailsAndSaveToDatabase();
+    console.log('Fetch Completed');
   }
 
   @Get()
