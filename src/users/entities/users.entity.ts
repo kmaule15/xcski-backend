@@ -42,15 +42,14 @@ export class User {
   }
 
   @OneToMany(() => Post, (post) => post.author)
-  posts: Post[];
+  posts?: Post[];
 
   @OneToMany(() => Event, (event) => event.author)
-  authoredEvents: Event[];
+  authoredEvents?: Event[];
 
-  //might change to its own table based on Vaishnavi's comments
   @ManyToMany(() => Event, (event) => event.participants)
-  participatedEvents: Event[];
+  participatedEvents?: Event[];
 
   @ManyToMany(() => Event, (event) => event.invitees)
-  invitedEvents: Event[];
+  invitedEvents?: Event[];
 }

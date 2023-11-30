@@ -15,6 +15,7 @@ import { JwtAuthGuard } from 'src/Authentication/guards/jwt-auth.guard';
 import { GetUser } from 'src/Authentication/decorators/get-user.decorator';
 import { User } from 'src/users/entities/users.entity';
 import { Trail } from 'src/trails/entities/trails.entity';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Controller('events')
 export class EventsController {
@@ -30,8 +31,11 @@ export class EventsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() event: Event): Promise<void> {
-    return this.eventsService.updateEvent(id, event);
+  update(
+    @Param('id') id: number,
+    @Body() updateEventDto: UpdateEventDto,
+  ): Promise<void> {
+    return this.eventsService.updateEventDetails(id, updateEventDto);
   }
 
   @Delete(':id')
