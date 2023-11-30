@@ -5,7 +5,20 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  ValidateNested,
 } from 'class-validator';
+
+
+export class TrailNodeDto {
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  coordinates: number[];
+}
 
 export class CreateTrailDto {
   @IsString()
@@ -43,6 +56,11 @@ export class CreateTrailDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  @IsIn(['classic', 'skate'], { each: true })
+  @IsIn(['classic', 'skate', 'Skating', 'Backcountry'], { each: true })
   typesAllowed: string[];
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  Nodes: TrailNodeDto[];
 }

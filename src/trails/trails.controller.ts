@@ -33,6 +33,13 @@ export class TrailsController {
     return this.trailsService.removeTrail(id);
   }
 
+  @Get('grooming-data')
+  async getGroomingData(): Promise<void> {
+    console.log('Fetch Started')
+    await this.trailsService.getTrailsAndSaveToDatabase();
+    console.log('Fetch Completed')
+  }
+
   @Get()
   findAll(): Promise<Trail[]> {
     return this.trailsService.findAllTrails();

@@ -153,10 +153,31 @@ export class AuthService {
         //Send email
         await this.emailService.sendEmail(emailOptions);
 
-        return token;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+    async CheckExistReset(email: string): Promise< { access_token: string} | null > {
+        try{
+            //checks if exists
+            const user = await this.usersService.findUserbyEmail(email)
+            
+            //Create token
+            const token = this.ResetToken(email, user.id, user.username);
+
+            //Create Email with token url
+            const ET = 'http://localhost:3001/PWU/' +(await token).access_token;
+            if (user){
+                const emailOptions = {
+                    from: 'XCSadm@gmail.com',
+                    to: email,
+                    subject: 'Reset Password!',
+                    html: "<a href=" +ET+ ">Click Here to Reset Password!</a> ",
+                  };
+                  
+            //Send email      
+            await this.emailService.sendEmail(emailOptions); 
+    
+            return token;
+            }
+            
+        }catch(error){
+            console.log(error)
+        }
 }
