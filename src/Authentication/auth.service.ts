@@ -101,7 +101,8 @@ export class AuthService {
 
       //Create Email with token url
       const ET =
-        `${process.env.REACT_APP_FRONTEND_URL}/` + (await token).access_token;
+        `${process.env.REACT_APP_FRONTEND_URL}/PWU/` +
+        (await token).access_token;
       if (user) {
         const emailOptions = {
           from: 'XCSadm@gmail.com',
