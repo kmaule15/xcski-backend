@@ -105,8 +105,8 @@ export class AuthService {
         const emailOptions = {
           from: 'XCSadm@gmail.com',
           to: email,
-          subject: 'Heck',
-          html: '<a href=' + ET + '>Tester</a> ',
+          subject: 'Reset Password!',
+          html: '<a href=' + ET + '>Click Here to Reset Password!</a> ',
         };
 
         //Send email
@@ -149,35 +149,13 @@ export class AuthService {
             link +
             '>Go To Event</a>',
         };
-
         //Send email
         await this.emailService.sendEmail(emailOptions);
 
-    async CheckExistReset(email: string): Promise< { access_token: string} | null > {
-        try{
-            //checks if exists
-            const user = await this.usersService.findUserbyEmail(email)
-            
-            //Create token
-            const token = this.ResetToken(email, user.id, user.username);
-
-            //Create Email with token url
-            const ET = 'http://localhost:3001/PWU/' +(await token).access_token;
-            if (user){
-                const emailOptions = {
-                    from: 'XCSadm@gmail.com',
-                    to: email,
-                    subject: 'Reset Password!',
-                    html: "<a href=" +ET+ ">Click Here to Reset Password!</a> ",
-                  };
-                  
-            //Send email      
-            await this.emailService.sendEmail(emailOptions); 
-    
-            return token;
-            }
-            
-        }catch(error){
-            console.log(error)
-        }
+        return token;
+      }
+    } catch (error) {
+      console.error('Email failed to send: ', error);
+    }
+  }
 }
