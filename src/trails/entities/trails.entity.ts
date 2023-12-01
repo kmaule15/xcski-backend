@@ -29,7 +29,22 @@ export class Trail {
   @Column('double precision')
   longitude: number;
 
-  @Column({ type: 'enum', enum: ['Freeride', 'Novice', 'Easy', 'Intermediate' , 'Medium', 'Difficult', 'Advanced', 'Expert'] })
+  @Column({ nullable: true, type: 'numeric', precision: 3, scale: 2 })
+  rating: number;
+
+  @Column({
+    type: 'enum',
+    enum: [
+      'Freeride',
+      'Novice',
+      'Easy',
+      'Intermediate',
+      'Medium',
+      'Difficult',
+      'Advanced',
+      'Expert',
+    ],
+  })
   difficulty: string;
 
   @Column()
@@ -38,7 +53,22 @@ export class Trail {
   @Column()
   estimatedTime: number;
 
-  @Column({ type: 'enum', enum: ['Classic', 'Classick', 'Skate', 'Skating', 'Backcountry', 'No','Snowmobile', 'Hike', 'Mogul',"Fatbike" ], array: true })
+  @Column({
+    type: 'enum',
+    enum: [
+      'Classic',
+      'Classick',
+      'Skate',
+      'Skating',
+      'Backcountry',
+      'No',
+      'Snowmobile',
+      'Hike',
+      'Mogul',
+      'Fatbike',
+    ],
+    array: true,
+  })
   typesAllowed: string[];
 
   @Column({ type: 'jsonb', array: false, nullable: true })

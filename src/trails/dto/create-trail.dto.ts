@@ -8,7 +8,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-
 export class TrailNodeDto {
   @IsNumber()
   @IsNotEmpty()
@@ -40,6 +39,9 @@ export class CreateTrailDto {
   @IsNumber()
   @IsNotEmpty()
   longitude: number;
+
+  @IsNumber()
+  rating: number;
 
   @IsString()
   @IsNotEmpty()

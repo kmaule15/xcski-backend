@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Trail } from './entities/trails.entity';
 import { Repository } from 'typeorm';
@@ -18,6 +18,7 @@ export class TrailsService {
     trail.location = createTrailDto.location;
     trail.latitude = createTrailDto.latitude;
     trail.longitude = createTrailDto.longitude;
+    trail.rating = null;
     trail.difficulty = createTrailDto.difficulty;
     trail.length = createTrailDto.length;
     trail.estimatedTime = createTrailDto.estimatedTime;
@@ -68,7 +69,6 @@ export class TrailsService {
     }
   }
 
-
   async getTrailsAndSaveToDatabase(): Promise<void> {
     const overpassUrl = 'http://overpass-api.de/api/interpreter';
     const overpassQuery = `
@@ -93,7 +93,9 @@ export class TrailsService {
     // >;
     // out skel qt;
     try {
-      const response = await axios.post(overpassUrl, overpassQuery, { timeout: 600000 });
+      const response = await axios.post(overpassUrl, overpassQuery, {
+        timeout: 600000,
+      });
       const data = response.data;
 
       if (!data || !data.elements) {
@@ -102,8 +104,12 @@ export class TrailsService {
       }
 
       const uniqueTrailNames = new Set<string>();
-      const allowedGroomingTypes = new Set(['Classic', 'Skate', 'Skating','Snowmobile']);
-
+      const allowedGroomingTypes = new Set([
+        'Classic',
+        'Skate',
+        'Skating',
+        'Snowmobile',
+      ]);
 
       // Iterate over each element in data.elements
       for (const element of data.elements) {
@@ -118,46 +124,53 @@ export class TrailsService {
           uniqueTrailNames.add(trailName); // Add the trail name to the set
 
           const firstNodeId = element.nodes[0];
-          const firstNodeCoordinates = this.getNodeCoordinates(data.elements, firstNodeId);
+          const firstNodeCoordinates = this.getNodeCoordinates(
+            data.elements,
+            firstNodeId,
+          );
           const groomingTypes = element.tags['piste:grooming']
-            ? element.tags['piste:grooming'].split(/[+;]/).map(type =>
-              type.charAt(0).toUpperCase() + type.slice(1))
-              : [];
+            ? element.tags['piste:grooming']
+                .split(/[+;]/)
+                .map((type) => type.charAt(0).toUpperCase() + type.slice(1))
+            : [];
 
-          if (!groomingTypes || !groomingTypes.some(type => allowedGroomingTypes.has(type))) {
-                continue; // Skip trails with incorrect grooming types
-          } 
+          if (
+            !groomingTypes ||
+            !groomingTypes.some((type) => allowedGroomingTypes.has(type))
+          ) {
+            continue; // Skip trails with incorrect grooming types
+          }
           const difficulty = element.tags['piste:difficulty']
             ? element.tags['piste:difficulty'].charAt(0).toUpperCase() +
               element.tags['piste:difficulty'].slice(1)
             : null;
 
-            
           const trailToAdd: Trail = {
             name: trailName,
-            description: element.tags.description || "No Description",
-            location: element.tags.location || "N/A",
+            description: element.tags.description || 'No Description',
+            location: element.tags.location || 'N/A',
             latitude: firstNodeCoordinates ? firstNodeCoordinates[0] : null,
             longitude: firstNodeCoordinates ? firstNodeCoordinates[1] : null,
-            difficulty: difficulty || "Easy",
+            rating: null,
+            difficulty: difficulty || 'Easy',
             length: element.tags.length || 1,
             estimatedTime: element.tags.estimatedTime || 60,
-            typesAllowed: groomingTypes, 
+            typesAllowed: groomingTypes,
             Nodes: this.extractNodes(data.elements, element),
             id: 0,
-            events: []
+            events: [],
           };
 
-          if (firstNodeCoordinates){
+          if (firstNodeCoordinates) {
             const [latitude, longitude] = firstNodeCoordinates;
 
             const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.MAPSAPIKEY}`;
             const geocodingResponse = await axios.get(geocodingUrl);
-            const address = geocodingResponse.data.results[0]?.formatted_address;
+            const address =
+              geocodingResponse.data.results[0]?.formatted_address;
             trailToAdd.location = address || 'N/A';
           }
 
-         
           // Add the trail to the database
           await this.createTrailInDatabase(trailToAdd);
         }
@@ -169,13 +182,13 @@ export class TrailsService {
   }
 
   private async createTrailInDatabase(trailToAdd: Trail): Promise<void> {
-    
     try {
-      await this.createTrail(
-        trailToAdd
-      );
+      await this.createTrail(trailToAdd);
     } catch (error) {
-      console.error('Error occurred while creating trail in the database:', error);
+      console.error(
+        'Error occurred while creating trail in the database:',
+        error,
+      );
       throw error;
     }
   }
@@ -193,10 +206,10 @@ export class TrailsService {
         coordinates: this.getNodeCoordinates(elements, nodeId),
       }));
     }
-  
+
     return [];
   }
-   private getNodeCoordinates(elements: any[], nodeId: number): number[] | null {
+  private getNodeCoordinates(elements: any[], nodeId: number): number[] | null {
     const nodeElement = this.findElementById(elements, nodeId);
     return nodeElement ? [nodeElement.lat, nodeElement.lon] : null;
   }
@@ -204,6 +217,4 @@ export class TrailsService {
   private findElementById(elements: any[], id: number): any | null {
     return elements.find((element) => element.id === id) || null;
   }
-
-
 }

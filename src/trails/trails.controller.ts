@@ -23,6 +23,16 @@ export class TrailsController {
     return this.trailsService.createTrail(createTrailDto);
   }
 
+  @Put('/:id')
+  async rerateTrailFromRating(
+    @Param('id') id: number,
+    @Body() ratingValue: number,
+  ): Promise<void> {
+    const trail = await this.trailsService.findOneTrail(id);
+    trail.rating = ratingValue; //call trailratings service call to get rating for trail
+    return this.trailsService.updateTrail(id, trail);
+  }
+
   @Put(':id')
   update(@Param('id') id: number, @Body() trail: Trail): Promise<void> {
     return this.trailsService.updateTrail(id, trail);
@@ -35,9 +45,9 @@ export class TrailsController {
 
   @Get('grooming-data')
   async getGroomingData(): Promise<void> {
-    console.log('Fetch Started')
+    console.log('Fetch Started');
     await this.trailsService.getTrailsAndSaveToDatabase();
-    console.log('Fetch Completed')
+    console.log('Fetch Completed');
   }
 
   @Get()
