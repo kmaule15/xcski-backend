@@ -12,6 +12,8 @@ import { TrailsService } from './trails.service';
 import { Trail } from './entities/trails.entity';
 import { JwtAuthGuard } from 'src/Authentication/guards/jwt-auth.guard';
 import { CreateTrailDto } from './dto/create-trail.dto';
+import { User } from 'src/users/entities/users.entity';
+import { GetUser } from 'src/Authentication/decorators/get-user.decorator';
 
 @Controller('trails')
 export class TrailsController {
@@ -19,8 +21,11 @@ export class TrailsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  createTrail(@Body() createTrailDto: CreateTrailDto): Promise<Trail> {
-    return this.trailsService.createTrail(createTrailDto);
+  createTrail(
+    @Body() createTrailDto: CreateTrailDto,
+    @GetUser() user: User,
+  ): Promise<Trail> {
+    return this.trailsService.createTrail(createTrailDto, user.id);
   }
 
   @Put(':id')
@@ -35,9 +40,9 @@ export class TrailsController {
 
   @Get('grooming-data')
   async getGroomingData(): Promise<void> {
-    console.log('Fetch Started')
+    console.log('Fetch Started');
     await this.trailsService.getTrailsAndSaveToDatabase();
-    console.log('Fetch Completed')
+    console.log('Fetch Completed');
   }
 
   @Get()

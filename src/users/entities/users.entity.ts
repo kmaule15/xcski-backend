@@ -11,6 +11,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { Post } from 'src/Community/Posts/entities/post.entity';
 import { Event } from 'src/Community/events/entities/event.entity';
+import { Trail } from 'src/trails/entities/trails.entity';
 
 @Entity('users')
 @Unique(['email'])
@@ -52,4 +53,7 @@ export class User {
 
   @ManyToMany(() => Event, (event) => event.invitees)
   invitedEvents?: Event[];
+
+  @OneToMany(() => Trail, (trail) => trail.author)
+  createdTrails?: Trail[];
 }
