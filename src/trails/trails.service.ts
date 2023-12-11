@@ -59,11 +59,6 @@ export class TrailsService {
 
   async findOneTrail(id: number): Promise<Trail> {
     try {
-      const test = await this.trailsRepository.findOneOrFail({
-        where: { id: id },
-        relations: ['author'],
-      });
-      console.log(test);
       return await this.trailsRepository.findOneOrFail({
         where: { id: id },
         relations: ['author'],

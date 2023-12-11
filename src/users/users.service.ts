@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import * as bcrypt from 'bcrypt';
+import { Trail } from 'src/trails/entities/trails.entity';
 
 @Injectable()
 export class UsersService {
@@ -50,6 +51,29 @@ export class UsersService {
     await this.usersRepository.update(id, user);
   }
 
+  async updateMyTrails(id: number, myTrails: Trail[]): Promise<void> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id: id },
+        relations: ['myTrails'],
+      });
+
+      if (!user) {
+        throw new Error(`User with id ${id} not found`);
+      }
+
+      user.myTrails = myTrails;
+      await this.usersRepository.save(user);
+      await this.usersRepository.findOne({ where: { id: id } });
+    } catch (error) {
+      console.error(
+        'Error occurred while adding trail to users trails: ',
+        error,
+      );
+      throw new Error('Failed to add the trail to the users trails');
+    }
+  }
+
   async remove(id: number): Promise<void> {
     await this.usersRepository.delete(id);
   }
@@ -89,7 +113,7 @@ export class UsersService {
   async findUserByUsername(username: string): Promise<User> {
     return await this.usersRepository.findOne({
       where: { username },
-      relations: ['invitedEvents', 'participatedEvents'],
+      relations: ['invitedEvents', 'participatedEvents', 'myTrails'],
     });
   }
 }

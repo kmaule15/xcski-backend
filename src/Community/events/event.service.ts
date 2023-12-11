@@ -58,7 +58,7 @@ export class EventsService {
     // the join table for the many to many relationship
     try {
       const event = await this.eventsRepository.findOne({
-        where: { id },
+        where: { id: id },
         relations: ['participants', 'invitees'],
       });
 
@@ -67,11 +67,10 @@ export class EventsService {
       }
       event.participants = newParticipants;
       event.invitees = invitees;
-      console.log(event);
 
       await this.eventsRepository.save(event);
 
-      await this.eventsRepository.findOne({ where: { id } });
+      await this.eventsRepository.findOne({ where: { id: id } });
     } catch (error) {
       console.error('Error occurred while updating event: ', error);
       throw new Error('Failed to update the event');

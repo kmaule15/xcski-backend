@@ -12,6 +12,8 @@ import {
 import { UsersService } from './users.service';
 import { User } from './entities/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Trail } from 'src/trails/entities/trails.entity';
+import { GetUser } from 'src/Authentication/decorators/get-user.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -65,9 +67,18 @@ export class UsersController {
     }
   }
 
-  @Put(':id')
+  @Put('id/:id')
   update(@Param('id') id: number, @Body() user: User): Promise<void> {
     return this.usersService.update(id, user);
+  }
+
+  @Put('mytrails/:id')
+  updateMyTrails(
+    @Param('id') id: number,
+    @Body() body: { myTrails: Trail[] },
+  ): Promise<void> {
+    console.log('ID', id);
+    return this.usersService.updateMyTrails(id, body.myTrails);
   }
 
   @Delete(':id')

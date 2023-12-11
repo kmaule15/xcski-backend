@@ -5,6 +5,8 @@ import {
   Unique,
   OneToMany,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Event } from 'src/Community/events/entities/event.entity';
 import { User } from 'src/users/entities/users.entity';
@@ -78,4 +80,7 @@ export class Trail {
 
   @OneToMany(() => Event, (event) => event.trail)
   events?: Event[];
+
+  @ManyToMany(() => User, (user) => user.myTrails)
+  usersMyTrails?: User[];
 }

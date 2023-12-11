@@ -7,6 +7,7 @@ import {
   BeforeUpdate,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Post } from 'src/Community/Posts/entities/post.entity';
@@ -56,4 +57,18 @@ export class User {
 
   @OneToMany(() => Trail, (trail) => trail.author)
   createdTrails?: Trail[];
+
+  @ManyToMany(() => Trail, (trail) => trail.usersMyTrails)
+  @JoinTable({
+    name: 'user_mytrails',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'trail_id',
+      referencedColumnName: 'id',
+    },
+  })
+  myTrails?: Trail[];
 }
