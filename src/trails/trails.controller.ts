@@ -26,8 +26,10 @@ export class TrailsController {
   @Put('/:id')
   async rerateTrailFromRating(
     @Param('id') id: number,
-    @Body() ratingValue: number,
+    @Body('aaa') ratingValue: number,
   ): Promise<void> {
+    const idStr = id.toString();
+    id = +idStr.slice(1);
     const trail = await this.trailsService.findOneTrail(id);
     trail.rating = ratingValue; //call trailratings service call to get rating for trail
     return this.trailsService.updateTrail(id, trail);

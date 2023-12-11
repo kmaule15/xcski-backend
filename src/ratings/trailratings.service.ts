@@ -37,14 +37,11 @@ export class TrailRatingsService {
 
   async calculateRatingForTrail(id: number): Promise<number> {
     try {
-      const idStr = id.toString();
-      idStr.slice(1, 2);
-      id = idStr;
-
       const ratings = await this.findRatingsForOneTrail(id);
       let totalRatings = 0;
       let numRatings = 0;
       if (ratings.length == 0) {
+        console.log('comp trail:::::: ' + ratings);
         return 0;
       } else {
         ratings.forEach((element) => {
@@ -53,6 +50,7 @@ export class TrailRatingsService {
         });
       }
       const finRating = totalRatings / numRatings;
+      console.log('comp trail:::::: ' + finRating);
       return finRating;
     } catch (error) {
       console.error(
@@ -65,7 +63,7 @@ export class TrailRatingsService {
 
   async findRatingsForOneTrail(id: number): Promise<TrailRating[]> {
     try {
-      return await this.trailRatingsRepository.findBy({ id: id });
+      return await this.trailRatingsRepository.findBy({ trailId: id });
     } catch (error) {
       console.error('Error occurred while finding trail ratings:', error);
       throw new Error('Failed to return trail ratings.');

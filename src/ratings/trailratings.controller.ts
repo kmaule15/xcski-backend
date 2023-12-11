@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Put,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Put, Param, Post } from '@nestjs/common';
 import { TrailRatingsService } from './trailratings.service';
 import { TrailRating } from './entities/trailratings.entity';
 import { CreateTrailRatingDto } from './dto/create-trail-rating.dto';
@@ -30,6 +22,9 @@ export class TrailRatingsController {
 
   @Get(':id')
   findOne(@Param('id') id: number): Promise<number> {
+    const idStr = id.toString();
+    id = +idStr.slice(1);
+    console.log(id);
     return this.trailsRatingsService.calculateRatingForTrail(id);
   }
 }
