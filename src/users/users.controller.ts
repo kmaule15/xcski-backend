@@ -77,7 +77,6 @@ export class UsersController {
     @Param('id') id: number,
     @Body() body: { myTrails: Trail[] },
   ): Promise<void> {
-    console.log('ID', id);
     return this.usersService.updateMyTrails(id, body.myTrails);
   }
 
