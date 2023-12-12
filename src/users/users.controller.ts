@@ -8,12 +8,14 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './entities/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Trail } from 'src/trails/entities/trails.entity';
 import { GetUser } from 'src/Authentication/decorators/get-user.decorator';
+import { JwtAuthGuard } from 'src/Authentication/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -73,6 +75,7 @@ export class UsersController {
   }
 
   @Put('mytrails/:id')
+  @UseGuards(JwtAuthGuard)
   updateMyTrails(
     @Param('id') id: number,
     @Body() body: { myTrails: Trail[] },

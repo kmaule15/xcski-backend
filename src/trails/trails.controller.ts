@@ -34,7 +34,8 @@ export class TrailsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  @UseGuards(JwtAuthGuard)
+  remove(@Param('id') id: string): Promise<void> {
     return this.trailsService.removeTrail(id);
   }
 

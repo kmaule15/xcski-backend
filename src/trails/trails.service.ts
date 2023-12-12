@@ -69,7 +69,34 @@ export class TrailsService {
     }
   }
 
-  async removeTrail(id: number): Promise<void> {
+  async removeTrail(id: string): Promise<void> {
+    // convert id parameter to a number
+    const idNumber = parseInt(id, 10);
+
+    // First Query: Find users with the specific trail
+    const usersWithTrail = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.myTrails', 'trail')
+      .where('trail.id = :id', { id })
+      .getMany();
+
+    // For each user, load complete myTrails and update
+    for (const user of usersWithTrail) {
+      // Load the complete myTrails collection
+      const fullUser = await this.usersRepository.findOne({
+        where: { id: user.id },
+        relations: ['myTrails'],
+      });
+      // Filter out the specific trail
+      fullUser.myTrails = fullUser.myTrails.filter((trail) => {
+        return trail.id !== idNumber;
+      });
+
+      // Save the user
+      await this.usersRepository.save(fullUser);
+    }
+
+    //then delete trail
     try {
       await this.trailsRepository.delete(id);
     } catch (error) {
