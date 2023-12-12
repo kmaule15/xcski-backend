@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-
+import { User } from 'src/users/entities/users.entity';
 
 export class TrailNodeDto {
   @IsNumber()

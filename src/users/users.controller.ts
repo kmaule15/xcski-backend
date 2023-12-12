@@ -8,10 +8,14 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './entities/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Trail } from 'src/trails/entities/trails.entity';
+import { GetUser } from 'src/Authentication/decorators/get-user.decorator';
+import { JwtAuthGuard } from 'src/Authentication/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -22,9 +26,14 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get('id/:id')
   findOne(@Param('id') id: number): Promise<User> {
     return this.usersService.findOne(id);
+  }
+
+  @Get('username/:username')
+  findOneByUsername(@Param('username') username: string): Promise<User> {
+    return this.usersService.findUserByUsername(username);
   }
 
   @Post()
@@ -60,9 +69,18 @@ export class UsersController {
     }
   }
 
-  @Put(':id')
+  @Put('id/:id')
   update(@Param('id') id: number, @Body() user: User): Promise<void> {
     return this.usersService.update(id, user);
+  }
+
+  @Put('mytrails/:id')
+  @UseGuards(JwtAuthGuard)
+  updateMyTrails(
+    @Param('id') id: number,
+    @Body() body: { myTrails: Trail[] },
+  ): Promise<void> {
+    return this.usersService.updateMyTrails(id, body.myTrails);
   }
 
   @Delete(':id')

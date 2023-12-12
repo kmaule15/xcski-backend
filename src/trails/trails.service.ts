@@ -4,16 +4,23 @@ import { Trail } from './entities/trails.entity';
 import { Repository } from 'typeorm';
 import { CreateTrailDto } from './dto/create-trail.dto';
 import axios from 'axios';
+import { User } from 'src/users/entities/users.entity';
 
 @Injectable()
 export class TrailsService {
   constructor(
     @InjectRepository(Trail) private trailsRepository: Repository<Trail>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async createTrail(createTrailDto: CreateTrailDto): Promise<Trail> {
+  async createTrail(
+    createTrailDto: CreateTrailDto,
+    userId: number,
+  ): Promise<Trail> {
+    const author = await this.usersRepository.findOneByOrFail({ id: userId });
     const trail = new Trail();
     trail.name = createTrailDto.name;
+    trail.author = author;
     trail.description = createTrailDto.description;
     trail.location = createTrailDto.location;
     trail.latitude = createTrailDto.latitude;
@@ -52,14 +59,44 @@ export class TrailsService {
 
   async findOneTrail(id: number): Promise<Trail> {
     try {
-      return await this.trailsRepository.findOneByOrFail({ id: id });
+      return await this.trailsRepository.findOneOrFail({
+        where: { id: id },
+        relations: ['author'],
+      });
     } catch (error) {
       console.error('Error occurred while finding trail:', error);
       throw new Error('Failed to return trail.');
     }
   }
 
-  async removeTrail(id: number): Promise<void> {
+  async removeTrail(id: string): Promise<void> {
+    // convert id parameter to a number
+    const idNumber = parseInt(id, 10);
+
+    // First Query: Find users with the specific trail
+    const usersWithTrail = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.myTrails', 'trail')
+      .where('trail.id = :id', { id })
+      .getMany();
+
+    // For each user, load complete myTrails and update
+    for (const user of usersWithTrail) {
+      // Load the complete myTrails collection
+      const fullUser = await this.usersRepository.findOne({
+        where: { id: user.id },
+        relations: ['myTrails'],
+      });
+      // Filter out the specific trail
+      fullUser.myTrails = fullUser.myTrails.filter((trail) => {
+        return trail.id !== idNumber;
+      });
+
+      // Save the user
+      await this.usersRepository.save(fullUser);
+    }
+
+    //then delete trail
     try {
       await this.trailsRepository.delete(id);
     } catch (error) {
@@ -67,7 +104,6 @@ export class TrailsService {
       throw new Error('Failed to delete trail');
     }
   }
-
 
   async getTrailsAndSaveToDatabase(): Promise<void> {
     const overpassUrl = 'http://overpass-api.de/api/interpreter';
@@ -93,7 +129,9 @@ export class TrailsService {
     // >;
     // out skel qt;
     try {
-      const response = await axios.post(overpassUrl, overpassQuery, { timeout: 600000 });
+      const response = await axios.post(overpassUrl, overpassQuery, {
+        timeout: 600000,
+      });
       const data = response.data;
 
       if (!data || !data.elements) {
@@ -102,8 +140,12 @@ export class TrailsService {
       }
 
       const uniqueTrailNames = new Set<string>();
-      const allowedGroomingTypes = new Set(['Classic', 'Skate', 'Skating','Snowmobile']);
-
+      const allowedGroomingTypes = new Set([
+        'Classic',
+        'Skate',
+        'Skating',
+        'Snowmobile',
+      ]);
 
       // Iterate over each element in data.elements
       for (const element of data.elements) {
@@ -118,46 +160,52 @@ export class TrailsService {
           uniqueTrailNames.add(trailName); // Add the trail name to the set
 
           const firstNodeId = element.nodes[0];
-          const firstNodeCoordinates = this.getNodeCoordinates(data.elements, firstNodeId);
+          const firstNodeCoordinates = this.getNodeCoordinates(
+            data.elements,
+            firstNodeId,
+          );
           const groomingTypes = element.tags['piste:grooming']
-            ? element.tags['piste:grooming'].split(/[+;]/).map(type =>
-              type.charAt(0).toUpperCase() + type.slice(1))
-              : [];
+            ? element.tags['piste:grooming']
+                .split(/[+;]/)
+                .map((type) => type.charAt(0).toUpperCase() + type.slice(1))
+            : [];
 
-          if (!groomingTypes || !groomingTypes.some(type => allowedGroomingTypes.has(type))) {
-                continue; // Skip trails with incorrect grooming types
-          } 
+          if (
+            !groomingTypes ||
+            !groomingTypes.some((type) => allowedGroomingTypes.has(type))
+          ) {
+            continue; // Skip trails with incorrect grooming types
+          }
           const difficulty = element.tags['piste:difficulty']
             ? element.tags['piste:difficulty'].charAt(0).toUpperCase() +
               element.tags['piste:difficulty'].slice(1)
             : null;
 
-            
           const trailToAdd: Trail = {
             name: trailName,
-            description: element.tags.description || "No Description",
-            location: element.tags.location || "N/A",
+            description: element.tags.description || 'No Description',
+            location: element.tags.location || 'N/A',
             latitude: firstNodeCoordinates ? firstNodeCoordinates[0] : null,
             longitude: firstNodeCoordinates ? firstNodeCoordinates[1] : null,
-            difficulty: difficulty || "Easy",
+            difficulty: difficulty || 'Easy',
             length: element.tags.length || 1,
             estimatedTime: element.tags.estimatedTime || 60,
-            typesAllowed: groomingTypes, 
+            typesAllowed: groomingTypes,
             Nodes: this.extractNodes(data.elements, element),
             id: 0,
-            events: []
+            events: [],
           };
 
-          if (firstNodeCoordinates){
+          if (firstNodeCoordinates) {
             const [latitude, longitude] = firstNodeCoordinates;
 
             const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.MAPSAPIKEY}`;
             const geocodingResponse = await axios.get(geocodingUrl);
-            const address = geocodingResponse.data.results[0]?.formatted_address;
+            const address =
+              geocodingResponse.data.results[0]?.formatted_address;
             trailToAdd.location = address || 'N/A';
           }
 
-         
           // Add the trail to the database
           await this.createTrailInDatabase(trailToAdd);
         }
@@ -169,13 +217,13 @@ export class TrailsService {
   }
 
   private async createTrailInDatabase(trailToAdd: Trail): Promise<void> {
-    
     try {
-      await this.createTrail(
-        trailToAdd
-      );
+      await this.createTrail(trailToAdd, null);
     } catch (error) {
-      console.error('Error occurred while creating trail in the database:', error);
+      console.error(
+        'Error occurred while creating trail in the database:',
+        error,
+      );
       throw error;
     }
   }
@@ -193,10 +241,10 @@ export class TrailsService {
         coordinates: this.getNodeCoordinates(elements, nodeId),
       }));
     }
-  
+
     return [];
   }
-   private getNodeCoordinates(elements: any[], nodeId: number): number[] | null {
+  private getNodeCoordinates(elements: any[], nodeId: number): number[] | null {
     const nodeElement = this.findElementById(elements, nodeId);
     return nodeElement ? [nodeElement.lat, nodeElement.lon] : null;
   }
@@ -204,6 +252,4 @@ export class TrailsService {
   private findElementById(elements: any[], id: number): any | null {
     return elements.find((element) => element.id === id) || null;
   }
-
-
 }
