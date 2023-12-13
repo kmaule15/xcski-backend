@@ -4,16 +4,23 @@ import { Trail } from './entities/trails.entity';
 import { Repository } from 'typeorm';
 import { CreateTrailDto } from './dto/create-trail.dto';
 import axios from 'axios';
+import { User } from 'src/users/entities/users.entity';
 
 @Injectable()
 export class TrailsService {
   constructor(
     @InjectRepository(Trail) private trailsRepository: Repository<Trail>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async createTrail(createTrailDto: CreateTrailDto): Promise<Trail> {
+  async createTrail(
+    createTrailDto: CreateTrailDto,
+    userId: number,
+  ): Promise<Trail> {
+    const author = await this.usersRepository.findOneByOrFail({ id: userId });
     const trail = new Trail();
     trail.name = createTrailDto.name;
+    trail.author = author;
     trail.description = createTrailDto.description;
     trail.location = createTrailDto.location;
     trail.latitude = createTrailDto.latitude;
@@ -53,14 +60,44 @@ export class TrailsService {
 
   async findOneTrail(id: number): Promise<Trail> {
     try {
-      return await this.trailsRepository.findOneByOrFail({ id: id });
+      return await this.trailsRepository.findOneOrFail({
+        where: { id: id },
+        relations: ['author'],
+      });
     } catch (error) {
       console.error('Error occurred while finding trail:', error);
       throw new Error('Failed to return trail.');
     }
   }
 
-  async removeTrail(id: number): Promise<void> {
+  async removeTrail(id: string): Promise<void> {
+    // convert id parameter to a number
+    const idNumber = parseInt(id, 10);
+
+    // First Query: Find users with the specific trail
+    const usersWithTrail = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.myTrails', 'trail')
+      .where('trail.id = :id', { id })
+      .getMany();
+
+    // For each user, load complete myTrails and update
+    for (const user of usersWithTrail) {
+      // Load the complete myTrails collection
+      const fullUser = await this.usersRepository.findOne({
+        where: { id: user.id },
+        relations: ['myTrails'],
+      });
+      // Filter out the specific trail
+      fullUser.myTrails = fullUser.myTrails.filter((trail) => {
+        return trail.id !== idNumber;
+      });
+
+      // Save the user
+      await this.usersRepository.save(fullUser);
+    }
+
+    //then delete trail
     try {
       await this.trailsRepository.delete(id);
     } catch (error) {
@@ -183,7 +220,8 @@ export class TrailsService {
 
   private async createTrailInDatabase(trailToAdd: Trail): Promise<void> {
     try {
-      await this.createTrail(trailToAdd);
+      await this.createTrail(trailToAdd, null);
+
     } catch (error) {
       console.error(
         'Error occurred while creating trail in the database:',

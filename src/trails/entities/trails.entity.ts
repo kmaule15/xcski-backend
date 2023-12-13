@@ -4,8 +4,12 @@ import {
   Column,
   Unique,
   OneToMany,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Event } from 'src/Community/events/entities/event.entity';
+import { User } from 'src/users/entities/users.entity';
 
 @Entity('trails')
 @Unique(['name'])
@@ -16,6 +20,9 @@ export class Trail {
 
   @Column()
   name: string;
+
+  @ManyToOne(() => User, (user) => user.createdTrails)
+  author?: User;
 
   @Column()
   description: string;
@@ -76,4 +83,7 @@ export class Trail {
 
   @OneToMany(() => Event, (event) => event.trail)
   events?: Event[];
+
+  @ManyToMany(() => User, (user) => user.myTrails)
+  usersMyTrails?: User[];
 }

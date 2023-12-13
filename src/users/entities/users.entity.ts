@@ -7,10 +7,12 @@ import {
   BeforeUpdate,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Post } from 'src/Community/Posts/entities/post.entity';
 import { Event } from 'src/Community/events/entities/event.entity';
+import { Trail } from 'src/trails/entities/trails.entity';
 
 @Entity('users')
 @Unique(['email'])
@@ -52,4 +54,21 @@ export class User {
 
   @ManyToMany(() => Event, (event) => event.invitees)
   invitedEvents?: Event[];
+
+  @OneToMany(() => Trail, (trail) => trail.author)
+  createdTrails?: Trail[];
+
+  @ManyToMany(() => Trail, (trail) => trail.usersMyTrails)
+  @JoinTable({
+    name: 'user_mytrails',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'trail_id',
+      referencedColumnName: 'id',
+    },
+  })
+  myTrails?: Trail[];
 }

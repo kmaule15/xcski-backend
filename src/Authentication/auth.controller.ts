@@ -43,13 +43,18 @@ export class AuthController {
       token: string;
       eventId: number;
       participants: User[];
+      invitees: User[];
     },
   ): Promise<any> {
-    const { token, eventId, participants } = body;
+    const { token, eventId, participants, invitees } = body;
 
     try {
       await this.authService.validateToken(token);
-      await this.eventsService.updateEventParticipants(eventId, participants);
+      await this.eventsService.updateEventParticipants(
+        eventId,
+        participants,
+        invitees,
+      );
     } catch (error) {
       console.log(error);
     }
