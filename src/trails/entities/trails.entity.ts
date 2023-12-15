@@ -36,6 +36,9 @@ export class Trail {
   @Column('double precision')
   longitude: number;
 
+  @Column({ nullable: true, type: 'numeric', precision: 3, scale: 2 })
+  rating: number;
+
   @Column({
     type: 'enum',
     enum: [

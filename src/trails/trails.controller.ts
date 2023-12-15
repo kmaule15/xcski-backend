@@ -28,6 +28,18 @@ export class TrailsController {
     return this.trailsService.createTrail(createTrailDto, user.id);
   }
 
+  @Put('/:id')
+  async rerateTrailFromRating(
+    @Param('id') id: number,
+    @Body('aaa') ratingValue: number,
+  ): Promise<void> {
+    const idStr = id.toString();
+    id = +idStr.slice(1);
+    const trail = await this.trailsService.findOneTrail(id);
+    trail.rating = ratingValue; //call trailratings service call to get rating for trail
+    return this.trailsService.updateTrail(id, trail);
+  }
+
   @Put(':id')
   update(@Param('id') id: number, @Body() trail: Trail): Promise<void> {
     return this.trailsService.updateTrail(id, trail);

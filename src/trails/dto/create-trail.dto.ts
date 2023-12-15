@@ -41,6 +41,9 @@ export class CreateTrailDto {
   @IsNotEmpty()
   longitude: number;
 
+  @IsNumber()
+  rating: number;
+
   @IsString()
   @IsNotEmpty()
   difficulty: string;

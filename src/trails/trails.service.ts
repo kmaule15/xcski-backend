@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Trail } from './entities/trails.entity';
 import { Repository } from 'typeorm';
@@ -25,6 +25,7 @@ export class TrailsService {
     trail.location = createTrailDto.location;
     trail.latitude = createTrailDto.latitude;
     trail.longitude = createTrailDto.longitude;
+    trail.rating = null;
     trail.difficulty = createTrailDto.difficulty;
     trail.length = createTrailDto.length;
     trail.estimatedTime = createTrailDto.estimatedTime;
@@ -187,6 +188,7 @@ export class TrailsService {
             location: element.tags.location || 'N/A',
             latitude: firstNodeCoordinates ? firstNodeCoordinates[0] : null,
             longitude: firstNodeCoordinates ? firstNodeCoordinates[1] : null,
+            rating: null,
             difficulty: difficulty || 'Easy',
             length: element.tags.length || 1,
             estimatedTime: element.tags.estimatedTime || 60,
@@ -219,6 +221,7 @@ export class TrailsService {
   private async createTrailInDatabase(trailToAdd: Trail): Promise<void> {
     try {
       await this.createTrail(trailToAdd, null);
+
     } catch (error) {
       console.error(
         'Error occurred while creating trail in the database:',
